@@ -5,7 +5,7 @@ import TileManager
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
- 
+
 # 内蔵カメラから入力
 cap = cv2.VideoCapture(0)
 # 外付けカメラから入力
@@ -28,20 +28,20 @@ def drawTile(img):
     for tile in tileManager.tilelist:
         x,y = tile.pos
         w,h = tile.size
-        cv2.rectangle(img,tile.pos,(x+w, y + tile.long),tile.tilecolor,cv2.FILLED) 
+        cv2.rectangle(img,tile.pos,(x+w, y + tile.long),tile.tilecolor,cv2.FILLED)
     return img
 
 def drawTileAtHandPos(img):
     for i,tile in enumerate(tileManager.tileAtHandPosList):
         x,y = tile.pos
-        w,h = tile.size 
+        w,h = tile.size
 
         if tile.touch:
             cv2.rectangle(img,tile.pos,(x+w, y+h),(0,255,0),cv2.FILLED)
         elif tile.answer:
-            cv2.rectangle(img,tile.pos,(x+w, y+h),(111,172,64),cv2.FILLED) 
+            cv2.rectangle(img,tile.pos,(x+w, y+h),(111,172,64),cv2.FILLED)
         else:
-            cv2.rectangle(img,tile.pos,(x+w, y+h),tile.tilecolor,cv2.FILLED) 
+            cv2.rectangle(img,tile.pos,(x+w, y+h),tile.tilecolor,cv2.FILLED)
     return img
 
 
@@ -55,13 +55,16 @@ level = 1
 # key=フレーム
 # 要素＝[何フレーム連続で,どこのキーが押されたか]のリスト
 # キーは0-87で白鍵は0-51、黒鍵は52-87
-leftpath = 'left.txt'
+
+leftpath = 'obenkyoshitoiteyo_short_left.txt'
+rightpath = 'obenkyoshitoiteyo_short_right.txt'
+
 with open(leftpath) as f:
     left = f.read()
 import ast
 leftKeyPushDict = ast.literal_eval(left)
 
-rightpath = 'right.txt'
+
 with open(rightpath) as f:
     right = f.read()
 import ast
@@ -86,6 +89,7 @@ with mp_hands.Hands(
             continue
 
         img_h, img_w, _ = img.shape     # サイズ取得
+        print(img_h, img_w)
         img.flags.writeable = False
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         results = hands.process(img)
@@ -93,7 +97,7 @@ with mp_hands.Hands(
         img.flags.writeable = True
         img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
-        
+
         tileManager.updateTileMustPushedList()
 
         # if(tileManager.isStop()):
@@ -119,10 +123,10 @@ with mp_hands.Hands(
 
         img = drawTile(img)
         img = drawTileAtHandPos(img)
-        
+
         # すべての押されている情報をクリア
         tileManager.clearTileTouch()
-        
+
         # 手の位置をもとに押されている情報を更新
         if results.multi_hand_landmarks:
             # このfor一回目のループで右、二回目で左を回す
@@ -132,7 +136,7 @@ with mp_hands.Hands(
                     hand_landmarks,
                     mp_hands.HAND_CONNECTIONS,
                     mp_drawing_styles.get_default_hand_landmarks_style(),
-                    mp_drawing_styles.get_default_hand_connections_style())       
+                    mp_drawing_styles.get_default_hand_connections_style())
                 for tile in tileManager.tileMustPushedList:
                     x,y = tile.pos
                     w,h = tile.size
