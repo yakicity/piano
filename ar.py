@@ -6,21 +6,45 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
 
+
+def rescale_frame(frame_input, percent=30):
+    width = int(frame_input.shape[1] * percent / 100)
+    height = int(frame_input.shape[0] * percent / 100)
+    dim = (width, height)
+    return cv2.resize(frame_input, dim, interpolation=cv2.INTER_AREA)
+
+
+# ==============================================================================
 # 内蔵カメラから入力
 cap = cv2.VideoCapture(0)
 # 外付けカメラから入力
 # cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 
-height = 720
-cap.set(3,1280)
+camera = "mac"
+
+# ==============================================================================
+
+if camera ==  "mac":
+    height = 1080
+    width = 1920
+    ylimit = height - 300
+elif camera == "windows":
+    height = 720
+    width = 1280
+    ylimit = height - 100
+elif camera == "external":
+    height = 960
+    width = 1280
+    ylimit = height - 100
+
+
+cap.set(3,width)
 cap.set(4,height)
 fps = cap.get(cv2.CAP_PROP_FPS)
 
 
 # landmarkの繋がり表示用
 landmark_line_ids = [4,8,12,16,20] #親、人、中、薬、子
-
-ylimit = height - 100
 
 
 
@@ -56,8 +80,9 @@ level = 1
 # 要素＝[何フレーム連続で,どこのキーが押されたか]のリスト
 # キーは0-87で白鍵は0-51、黒鍵は52-87
 
-leftpath = 'obenkyoshitoiteyo_short_left.txt'
-rightpath = 'obenkyoshitoiteyo_short_right.txt'
+song = 'milabo'
+leftpath = f'ar_{song}_left.txt'
+rightpath = f'ar_{song}_right.txt'
 
 with open(leftpath) as f:
     left = f.read()
@@ -74,7 +99,7 @@ rightKeyPushDict = ast.literal_eval(right)
 
 
 
-tileManager = TileManager.TileManager(ylimit,False)
+tileManager = TileManager.TileManager(ylimit,camera)
 
 with mp_hands.Hands(
     model_complexity=0,
@@ -88,14 +113,17 @@ with mp_hands.Hands(
             print("Ignoring empty camera frame.")
             continue
 
+
+        # img = cv2.resize(img, (1280,960))
+        # img = rescale_frame(img)
         img_h, img_w, _ = img.shape     # サイズ取得
         print(img_h, img_w)
         img.flags.writeable = False
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         results = hands.process(img)
         # 検出された手の骨格をカメラ画像に重ねて描画
-        img.flags.writeable = True
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        img.flags.writeable = False
+        # img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
 
         tileManager.updateTileMustPushedList()

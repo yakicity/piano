@@ -76,9 +76,12 @@ keyList = np.concatenate([whiteKeyList, blackKeyList], 0)
 leftKeyPushofFrame = [0] * 88
 rightKeyPushofFrame = [0] * 88
 
-# path = 'benkyo.mp4'
-# path = '/Users/yusuke/data/obenkyoshitoiteyo.mov'
-path = '/Users/yusuke/data/bb.mov'
+# =====================================================================================
+song = 'tadashikunarenai'
+# =====================================================================================
+path = f'/Users/yusuke/data/{song}.mov'
+
+# path = '/Users/yusuke/data/a.mov'
 capture = cv2.VideoCapture(path)
 
 #左手でONになるとき
@@ -172,15 +175,23 @@ cv2.waitKey(1)
 
 # --------------------------------------------------------------------------------------
 
+# 各フレームでどのキーが押されたか
 leftKeyPush_np = np.array(leftKeyPush)
 rightKeyPush_np = np.array(rightKeyPush)
 
+# 各フレームで押されているキーのみをまとめてみた
+leftKeyPushKeyPerFrame = [np.where(i == 1)[0].tolist()  for i in leftKeyPush_np]
+rightKeyPushKeyPerFrame = [np.where(i == 1)[0].tolist()  for i in rightKeyPush_np]
+
+# 各キーごと、いつ押されたか
 leftKeyPushPerKey = leftKeyPush_np.T
 rightKeyPushPerKey = rightKeyPush_np.T
 
+# 各キーごと、押されたフレームのみをまとめた
 leftKeyPushFramePerKey= [(np.where(i == 1))[0] for i in leftKeyPushPerKey]
 rightKeyPushFramePerKey= [(np.where(i == 1))[0] for i in rightKeyPushPerKey]
 
+# 各キーごと、連続で押されたフレームごと配列にする
 leftContinuousKeyPushFramePerKey = []
 for leftKeyPushFrame in leftKeyPushFramePerKey:
     leftContinuousKeyPushFrame = []
@@ -219,10 +230,11 @@ for rightKeyPushFrame in rightKeyPushFramePerKey:
         rightContinuousKeyPushFrame.append(tmp)
         rightContinuousKeyPushFramePerKey.append(rightContinuousKeyPushFrame)
 
+# [何フレーム目から、何フレームの間連続で押された、どのキーが]の配列
 leftContinuousKeyPush =  [[[i[0],len(i),keyIndex] for i in leftContinuousKeyPushFrame]for keyIndex,leftContinuousKeyPushFrame in enumerate(leftContinuousKeyPushFramePerKey) if len(leftContinuousKeyPushFrame) > 0]
 rightContinuousKeyPush =  [[[i[0],len(i),keyIndex] for i in rightContinuousKeyPushFrame]for keyIndex,rightContinuousKeyPushFrame in enumerate(rightContinuousKeyPushFramePerKey) if len(rightContinuousKeyPushFrame) > 0]
 
-
+# フレームが辞書のキー。4: [[8, 62], [8, 64]]　= 4フレーム目から８フレーク連続で62キーと64キーが押される
 leftContinuousKeyPush_dict = {}
 rightContinuousKeyPush_dict = {}
 
@@ -243,9 +255,14 @@ for i in rightContinuousKeyPush:
 leftContinuousKeyPush_dict = dict(sorted(leftContinuousKeyPush_dict.items()))
 rightContinuousKeyPush_dict = dict(sorted(rightContinuousKeyPush_dict.items()))
 
-with open('obenkyoshitoiteyo_left.txt', mode='w') as f:
+with open(f'ar_{song}_left.txt', mode='w') as f:
     f.write(str(leftContinuousKeyPush_dict))
-with open('obenkyoshitoiteyo_right.txt', mode='w') as f:
+with open(f'ar_{song}_right.txt', mode='w') as f:
     f.write(str(rightContinuousKeyPush_dict))
+with open(f'dl_{song}_left.txt', mode='w') as f:
+    f.write(str(leftKeyPushKeyPerFrame))
+with open(f'dl_{song}_right.txt', mode='w') as f:
+    f.write(str(rightKeyPushKeyPerFrame))
+
 #  print(leftContinuousKeyPush_dict)
 
