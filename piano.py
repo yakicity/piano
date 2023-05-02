@@ -77,7 +77,7 @@ leftKeyPushofFrame = [0] * 88
 rightKeyPushofFrame = [0] * 88
 
 # =====================================================================================
-song = 'tadashikunarenai'
+song = 'kieteshimaisoudesu'
 # =====================================================================================
 path = f'/Users/yusuke/data/{song}.mov'
 

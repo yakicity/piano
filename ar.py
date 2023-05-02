@@ -36,6 +36,10 @@ elif camera == "external":
     height = 960
     width = 1280
     ylimit = height - 100
+elif camera ==  "home":
+    height = 1080
+    width = 1920
+    ylimit = height - 300
 
 
 cap.set(3,width)
@@ -68,32 +72,73 @@ def drawTileAtHandPos(img):
             cv2.rectangle(img,tile.pos,(x+w, y+h),tile.tilecolor,cv2.FILLED)
     return img
 
-
-
+# =======================================================================
+level = 1
 maxcount = 10000
+# =======================================================================
 count = 0
 frame = 0
-level = 1
 
 
 # key=フレーム
 # 要素＝[何フレーム連続で,どこのキーが押されたか]のリスト
 # キーは0-87で白鍵は0-51、黒鍵は52-87
 
+# =======================================================================
 song = 'milabo'
-leftpath = f'ar_{song}_left.txt'
-rightpath = f'ar_{song}_right.txt'
 
-with open(leftpath) as f:
-    left = f.read()
-import ast
-leftKeyPushDict = ast.literal_eval(left)
+# =======================================================================
 
 
-with open(rightpath) as f:
-    right = f.read()
-import ast
-rightKeyPushDict = ast.literal_eval(right)
+ar_leftpath = f'ar_{song}_left.txt'
+ar_rightpath = f'ar_{song}_right.txt'
+dl_leftpath = f'dl_{song}_left.txt'
+dl_rightpath = f'dl_{song}_right.txt'
+
+# filepathからprogramingで使えるリストや辞書に変換
+def readfiletoinfo(filepath):
+    with open(filepath) as f:
+        str = f.read()
+    import ast
+    return ast.literal_eval(str)
+
+leftKeyPushDict = readfiletoinfo(ar_leftpath)
+rightKeyPushDict =  readfiletoinfo(ar_rightpath)
+leftKeyPushKeyPerFrame = readfiletoinfo(dl_leftpath)
+rightKeyPushKeyPerFrame = readfiletoinfo(dl_rightpath)
+
+# dlの二次元配列からキーの最大最小を取るため、ソート済み一次元配列にする
+def get_unique_list(seq):
+    seen = []
+    unique_two_dim_array = [x for x in seq if x not in seen and not seen.append(x)]
+    white_one_dim_array = []
+    black_one_dim_array = []
+    for i in unique_two_dim_array:
+        for j in i:
+            if j < 52:
+                white_one_dim_array.append(j)
+            else:
+                black_one_dim_array.append(j)
+    return set(white_one_dim_array),set(black_one_dim_array)
+
+leftKeyPushKeyPerFrame_white,leftKeyPushKeyPerFrame_black  = get_unique_list(leftKeyPushKeyPerFrame)
+rightKeyPushKeyPerFrame_white,rightKeyPushKeyPerFrame_black  = get_unique_list(rightKeyPushKeyPerFrame)
+
+
+
+
+# with open(ar_leftpath) as f:
+#     left = f.read()
+# import ast
+# leftKeyPushDict = ast.literal_eval(left)
+
+
+# with open(ar_rightpath) as f:
+#     right = f.read()
+# import ast
+# rightKeyPushDict = ast.literal_eval(right)
+
+
 
 
 
@@ -117,13 +162,14 @@ with mp_hands.Hands(
         # img = cv2.resize(img, (1280,960))
         # img = rescale_frame(img)
         img_h, img_w, _ = img.shape     # サイズ取得
-        print(img_h, img_w)
-        img.flags.writeable = False
-        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        # print(img_h, img_w)
+
+        # RGBにしないとmediapipeの精度落ちる
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         results = hands.process(img)
         # 検出された手の骨格をカメラ画像に重ねて描画
         img.flags.writeable = False
-        # img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
 
 
         tileManager.updateTileMustPushedList()
@@ -145,7 +191,7 @@ with mp_hands.Hands(
         else:
             count += 1
             continue
-        oldTilelist = tileManager.tilelist
+        # oldTilelist = tileManager.tilelist
         tileManager.appendAllTile(frame,leftKeyPushDict,rightKeyPushDict)
         tileManager.updateAllTile(ylimit)
 
