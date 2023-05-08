@@ -21,7 +21,7 @@ cap = cv2.VideoCapture(0)
 # cap = cv2.VideoCapture(1, cv2.CAP_DSHOW)
 
 camera = "mac"
-
+mode = "all"
 # ==============================================================================
 
 if camera ==  "mac":
@@ -85,7 +85,7 @@ frame = 0
 # キーは0-87で白鍵は0-51、黒鍵は52-87
 
 # =======================================================================
-song = 'milabo'
+song = 'obenkyoshitoiteyo'
 
 # =======================================================================
 
@@ -123,6 +123,7 @@ def get_unique_list(seq):
 
 leftKeyPushKeyPerFrame_white,leftKeyPushKeyPerFrame_black  = get_unique_list(leftKeyPushKeyPerFrame)
 rightKeyPushKeyPerFrame_white,rightKeyPushKeyPerFrame_black  = get_unique_list(rightKeyPushKeyPerFrame)
+
 
 
 

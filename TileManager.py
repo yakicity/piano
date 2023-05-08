@@ -2,11 +2,11 @@ import numpy as np
 
 whiteTilePosX = {
     "mac":np.array([
-         17,   54,   91,  128,  165,  202,  239,  276,  313,  350,  387,
-        424,  461,  498,  535,  572,  609,  646,  683,  720,  757,  794,
-        831,  868,  905,  942,  978, 1015, 1052, 1089, 1126, 1163, 1200,
-       1237, 1274, 1311, 1348, 1385, 1422, 1459, 1496, 1533, 1570, 1607,
-       1644, 1681, 1718, 1755, 1792, 1829, 1866, 1903]),
+          0,   37,   74,  111,  148,  185,  222,  259,  296,  333,  370,
+        407,  444,  481,  518,  555,  592,  629,  666,  703,  740,  777,
+        814,  851,  888,  925,  961,  998, 1035, 1072, 1109, 1146, 1183,
+       1220, 1257, 1294, 1331, 1368, 1405, 1442, 1479, 1516, 1553, 1590,
+       1627, 1664, 1701, 1738, 1775, 1812, 1849, 1886]),
     "windows":np.array([
           0,   25,   49,   74,   99,  123,  148,  173,  197,  222,  247,
         271,  296,  321,  345,  370,  395,  419,  444,  469,  493,  518,
@@ -29,10 +29,10 @@ whiteTilePosX = {
 
 blackTilePosX = {
     "mac":np.array([
-         42,  105,  152,  216,  257,  300,  364,  410,  475,  516,  558,
-        623,  668,  733,  774,  816,  881,  928,  991, 1033, 1075, 1139,
-       1185, 1250, 1291, 1334, 1399, 1443, 1508, 1549, 1592, 1657, 1702,
-       1766, 1808, 1849]),
+         22,   94,  135,  206,  244,  283,  354,  395,  465,  503,  544,
+        609,  654,  719,  760,  802,  867,  914,  977, 1019, 1061, 1125,
+       1171, 1236, 1277, 1320, 1385, 1429, 1494, 1535, 1578, 1643, 1688,
+       1752, 1794, 1835]),
     "windows":np.array([
          18,   60,   91,  134,  161,  190,  232,  263,  306,  334,  362,
         405,  435,  478,  506,  534,  577,  608,  650,  678,  706,  749,
@@ -85,6 +85,7 @@ class Tile():
         self.long = 0
         # 自分は何番目のタイルか
         self.index = posXIndex
+        self.reachTileAtHanndPos = False
 
 class TileAtHandPos(Tile):
     def __init__(self,posXIndex,ylimit,camera="mac") -> None:
@@ -101,8 +102,6 @@ class TileAtHandPos(Tile):
         self.touch = False
         # 鍵盤がたたかれるべきか
         self.answer = False
-
-
 
 
 
@@ -147,6 +146,50 @@ class TileManager:
             omitIndex = tileIndex - self.omitWhiteTileSum - self.omitBlackTileSum
         return omitIndex
 
+    # def updateAllTile(self,ylimit):
+    #     for i,tile in enumerate(self.tilelist):
+    #         x,y = tile.pos
+    #         w,h = tile.size
+
+    #         if(tile.reachTileAtHanndPos == False):
+    #             # タイルがで始めてから移動する
+    #             if(tile.pos[1] == 0 and tile.long < tile.size[1]):
+    #                 tile.long += dy
+    #             else:
+    #                 # タイル先端が手元ピアノに到達した＝鍵盤をたたくタイミング
+    #                 if(tile.pos[1] + tile.long > ylimit - whiteTileAtHandHeight[self.camera]):
+    #                     tile.reachTileAtHanndPos = True
+    #                     index = self.calcOmitIndex(tile.index)
+    #                     self.tileAtHandPosList[index].answer = True
+
+    #         else:
+    #             # タイルを縮める
+    #             tile.long -= dy
+
+    #             # タイル最上部が手元ピアノの最上部に来た＝鍵盤を話すタイミング
+    #             if(tile.pos[1] +dy > ylimit - whiteTileAtHandHeight[self.camera]):
+    #                 self.tileAtHandPosList[index].answer = False
+    #             # タイル先端が手元ピアノに到達した＝鍵盤をたたくタイミング
+
+    #             if(tile.pos[1] + tile.long > ylimit - whiteTileAtHandHeight[self.camera]):
+    #                 index = self.calcOmitIndex(tile.index)
+    #                 self.tileAtHandPosList[index].answer = True
+    #                 # タイルを縮める
+    #                 tile.long -= dy
+
+    #                 # タイル最上部が手元ピアノの最上部に来た＝鍵盤を話すタイミング
+    #                 if(tile.pos[1] +dy > ylimit - whiteTileAtHandHeight[self.camera]):
+    #                     self.tileAtHandPosList[index].answer = False
+
+    #             # タイル最上部が手元ピアノよりも下 ->消去
+    #             if(tile.pos[1] > ylimit):
+    #                 # tile.tilecolor = (255,255,255)
+    #                 self.tilelist.remove(tile)
+    #                 continue
+
+    #             # タイル先端を動かす
+    #             tile.pos = [tile.pos[0],tile.pos[1] + dy]
+
     def updateAllTile(self,ylimit):
         for i,tile in enumerate(self.tilelist):
             x,y = tile.pos
@@ -156,9 +199,11 @@ class TileManager:
             if(tile.pos[1] == 0 and tile.long < tile.size[1]):
                 tile.long += dy
             else:
+                # タイル先端を動かす
+                tile.pos = [tile.pos[0],tile.pos[1] + dy]
 
                 # タイル先端が手元ピアノに到達した＝鍵盤をたたくタイミング
-                if(tile.pos[1] +dy + tile.long > ylimit - whiteTileAtHandHeight[self.camera]):
+                if(tile.pos[1] + tile.long > ylimit - whiteTileAtHandHeight[self.camera]):
                     index = self.calcOmitIndex(tile.index)
                     self.tileAtHandPosList[index].answer = True
                     # タイルを縮める
@@ -168,14 +213,16 @@ class TileManager:
                     if(tile.pos[1] +dy > ylimit - whiteTileAtHandHeight[self.camera]):
                         self.tileAtHandPosList[index].answer = False
 
+                if(tile.pos[1] + tile.long > ylimit):
+                    tile.long -= dy
+
                 # タイル最上部が手元ピアノよりも下 ->消去
-                if(tile.pos[1] + dy> ylimit):
+                if(tile.pos[1] > ylimit):
                     # tile.tilecolor = (255,255,255)
                     self.tilelist.remove(tile)
                     continue
 
-                # タイル先端を動かす
-                tile.pos = [tile.pos[0],tile.pos[1] + dy]
+
 
     def updateTileMustPushedList(self):
         self.tileMustPushedList = [tileAtHandPos for tileAtHandPos in self.tileAtHandPosList if tileAtHandPos.answer == True]

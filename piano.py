@@ -255,14 +255,14 @@ for i in rightContinuousKeyPush:
 leftContinuousKeyPush_dict = dict(sorted(leftContinuousKeyPush_dict.items()))
 rightContinuousKeyPush_dict = dict(sorted(rightContinuousKeyPush_dict.items()))
 
-with open(f'ar_{song}_left.txt', mode='w') as f:
-    f.write(str(leftContinuousKeyPush_dict))
-with open(f'ar_{song}_right.txt', mode='w') as f:
-    f.write(str(rightContinuousKeyPush_dict))
-with open(f'dl_{song}_left.txt', mode='w') as f:
-    f.write(str(leftKeyPushKeyPerFrame))
-with open(f'dl_{song}_right.txt', mode='w') as f:
-    f.write(str(rightKeyPushKeyPerFrame))
+# with open(f'ar_{song}_left.txt', mode='w') as f:
+#     f.write(str(leftContinuousKeyPush_dict))
+# with open(f'ar_{song}_right.txt', mode='w') as f:
+#     f.write(str(rightContinuousKeyPush_dict))
+# with open(f'dl_{song}_left.txt', mode='w') as f:
+#     f.write(str(leftKeyPushKeyPerFrame))
+# with open(f'dl_{song}_right.txt', mode='w') as f:
+#     f.write(str(rightKeyPushKeyPerFrame))
 
 #  print(leftContinuousKeyPush_dict)
 
