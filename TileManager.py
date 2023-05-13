@@ -146,50 +146,6 @@ class TileManager:
             omitIndex = tileIndex - self.omitWhiteTileSum - self.omitBlackTileSum
         return omitIndex
 
-    # def updateAllTile(self,ylimit):
-    #     for i,tile in enumerate(self.tilelist):
-    #         x,y = tile.pos
-    #         w,h = tile.size
-
-    #         if(tile.reachTileAtHanndPos == False):
-    #             # タイルがで始めてから移動する
-    #             if(tile.pos[1] == 0 and tile.long < tile.size[1]):
-    #                 tile.long += dy
-    #             else:
-    #                 # タイル先端が手元ピアノに到達した＝鍵盤をたたくタイミング
-    #                 if(tile.pos[1] + tile.long > ylimit - whiteTileAtHandHeight[self.camera]):
-    #                     tile.reachTileAtHanndPos = True
-    #                     index = self.calcOmitIndex(tile.index)
-    #                     self.tileAtHandPosList[index].answer = True
-
-    #         else:
-    #             # タイルを縮める
-    #             tile.long -= dy
-
-    #             # タイル最上部が手元ピアノの最上部に来た＝鍵盤を話すタイミング
-    #             if(tile.pos[1] +dy > ylimit - whiteTileAtHandHeight[self.camera]):
-    #                 self.tileAtHandPosList[index].answer = False
-    #             # タイル先端が手元ピアノに到達した＝鍵盤をたたくタイミング
-
-    #             if(tile.pos[1] + tile.long > ylimit - whiteTileAtHandHeight[self.camera]):
-    #                 index = self.calcOmitIndex(tile.index)
-    #                 self.tileAtHandPosList[index].answer = True
-    #                 # タイルを縮める
-    #                 tile.long -= dy
-
-    #                 # タイル最上部が手元ピアノの最上部に来た＝鍵盤を話すタイミング
-    #                 if(tile.pos[1] +dy > ylimit - whiteTileAtHandHeight[self.camera]):
-    #                     self.tileAtHandPosList[index].answer = False
-
-    #             # タイル最上部が手元ピアノよりも下 ->消去
-    #             if(tile.pos[1] > ylimit):
-    #                 # tile.tilecolor = (255,255,255)
-    #                 self.tilelist.remove(tile)
-    #                 continue
-
-    #             # タイル先端を動かす
-    #             tile.pos = [tile.pos[0],tile.pos[1] + dy]
-
     def updateAllTile(self,ylimit):
         for i,tile in enumerate(self.tilelist):
             x,y = tile.pos

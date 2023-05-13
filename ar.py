@@ -89,12 +89,6 @@ song = 'obenkyoshitoiteyo'
 
 # =======================================================================
 
-
-ar_leftpath = f'ar_{song}_left.txt'
-ar_rightpath = f'ar_{song}_right.txt'
-dl_leftpath = f'dl_{song}_left.txt'
-dl_rightpath = f'dl_{song}_right.txt'
-
 # filepathからprogramingで使えるリストや辞書に変換
 def readfiletoinfo(filepath):
     with open(filepath) as f:
@@ -102,48 +96,40 @@ def readfiletoinfo(filepath):
     import ast
     return ast.literal_eval(str)
 
+
+# ARテキストデータの読み込み
+ar_leftpath = f'/Users/yusuke/dev/koike/pianotile_Ar/ar_txt/ar_{song}_left.txt'
+ar_rightpath = f'/Users/yusuke/dev/koike/pianotile_Ar/ar_txt/ar_{song}_right.txt'
+
 leftKeyPushDict = readfiletoinfo(ar_leftpath)
 rightKeyPushDict =  readfiletoinfo(ar_rightpath)
-leftKeyPushKeyPerFrame = readfiletoinfo(dl_leftpath)
-rightKeyPushKeyPerFrame = readfiletoinfo(dl_rightpath)
-
-# dlの二次元配列からキーの最大最小を取るため、ソート済み一次元配列にする
-def get_unique_list(seq):
-    seen = []
-    unique_two_dim_array = [x for x in seq if x not in seen and not seen.append(x)]
-    white_one_dim_array = []
-    black_one_dim_array = []
-    for i in unique_two_dim_array:
-        for j in i:
-            if j < 52:
-                white_one_dim_array.append(j)
-            else:
-                black_one_dim_array.append(j)
-    return set(white_one_dim_array),set(black_one_dim_array)
-
-leftKeyPushKeyPerFrame_white,leftKeyPushKeyPerFrame_black  = get_unique_list(leftKeyPushKeyPerFrame)
-rightKeyPushKeyPerFrame_white,rightKeyPushKeyPerFrame_black  = get_unique_list(rightKeyPushKeyPerFrame)
 
 
+# (未実装)鍵盤の数からキャリブレーションしたかった　-----------------------------------------------------------------------
+# dl_leftpath = f'/Users/yusuke/dev/koike/pianotile_Ar/dl_txt/dl_{song}_left.txt'
+# dl_rightpath = f'/Users/yusuke/dev/koike/pianotile_Ar/dl_txt/dl_{song}_right.txt'
 
+# leftKeyPushKeyPerFrame = readfiletoinfo(dl_leftpath)
+# rightKeyPushKeyPerFrame = readfiletoinfo(dl_rightpath)
 
+# # dlの二次元配列からキーの最大最小を取るため、ソート済み一次元配列にする
+# def get_unique_list(seq):
+#     seen = []
+#     unique_two_dim_array = [x for x in seq if x not in seen and not seen.append(x)]
+#     white_one_dim_array = []
+#     black_one_dim_array = []
+#     for i in unique_two_dim_array:
+#         for j in i:
+#             if j < 52:
+#                 white_one_dim_array.append(j)
+#             else:
+#                 black_one_dim_array.append(j)
+#     return set(white_one_dim_array),set(black_one_dim_array)
 
-# with open(ar_leftpath) as f:
-#     left = f.read()
-# import ast
-# leftKeyPushDict = ast.literal_eval(left)
+# leftKeyPushKeyPerFrame_white,leftKeyPushKeyPerFrame_black  = get_unique_list(leftKeyPushKeyPerFrame)
+# rightKeyPushKeyPerFrame_white,rightKeyPushKeyPerFrame_black  = get_unique_list(rightKeyPushKeyPerFrame)
 
-
-# with open(ar_rightpath) as f:
-#     right = f.read()
-# import ast
-# rightKeyPushDict = ast.literal_eval(right)
-
-
-
-
-
-
+# --------------------------------------------------------------------------------------------------------------------
 
 tileManager = TileManager.TileManager(ylimit,camera)
 
